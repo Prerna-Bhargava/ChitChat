@@ -165,7 +165,6 @@ function DispalyMessages({ setFetchChatsAgain, fetchChatsAgain }) {
 
     useEffect(() => {
         socket.on("message received", (newMsg) => {
-            console.log("received message")
             if (!selectedChatCompare || selectedChatCompare._id != newMsg.chat._id) {   //if this is not selected chat or none is selected chat/ give notification
                 if (!notifications.includes(newMsg)) {
                     updateSeenStatus(newMsg);
@@ -182,33 +181,34 @@ function DispalyMessages({ setFetchChatsAgain, fetchChatsAgain }) {
 
     return (
         <>
+            {selectedChat &&
+                <ScrollableFeed >
+                    <Box sx={{ display: "flex", flexDirection: "column" }}>
+                        {messages &&
+                            messages.map((msg, idx) => (
+                                <Box key={idx} sx={{ display: "flex" }}>
+                                    {(!sameSender(user, msg) && showAvatar(messages, msg, idx, user._id)) && (
+                                        <ProfileModal User={msg.sender} isAvatar={true} chats={true}></ProfileModal>
+                                    )}
+                                    <span onClick={() => showDeleteIcon(idx)} className={`msgBox ${sameSender(user, msg) ? "align-right" : "align-left"} ${(!sameSender(user, msg) && !showAvatar(messages, msg, idx, user._id)) ? "mL" : ""}  `} >
+                                        {msg.content}
+                                        {showDelIcons[idx] && sameSender(user, msg) && <>
+                                            <ClearIcon onClick={() => deleteMsg(msg)} />
+                                        </>}
+                                    </span>
+                                </Box>
 
-            <ScrollableFeed >
-                <Box sx={{ display: "flex", flexDirection: "column" }}>
-                    {messages &&
-                        messages.map((msg, idx) => (
-                            <Box key={idx} sx={{ display: "flex" }}>
-                                {(!sameSender(user, msg) && showAvatar(messages, msg, idx, user._id)) && (
-                                    <ProfileModal User={msg.sender} isAvatar={true} chats={true}></ProfileModal>
-                                )}
-                                <span onClick={() => showDeleteIcon(idx)} className={`msgBox ${sameSender(user, msg) ? "align-right" : "align-left"} ${(!sameSender(user, msg) && !showAvatar(messages, msg, idx, user._id)) ? "mL" : ""}  `} >
-                                    {msg.content}
-                                    {showDelIcons[idx] && sameSender(user, msg) && <>
-                                        <ClearIcon onClick={() => deleteMsg(msg)} />
-                                    </>}
-                                </span>
-                            </Box>
-
-                        ))}
-                </Box>
-            </ScrollableFeed>
-            <FormControl onKeyDown={sendMsg} fullWidth>
-                {isTyping && <div>
-                    <Lottie options={defaultOptions} width={70} style={{ marginBottom: 15, marginLeft: 0 }}></Lottie>
-                </div>}
-                <TextField id='msgField' variant="filled" placeholder='Enter a message' value={newMessge} onChange={setMessageValue}  >
-                </TextField>
-            </FormControl>
+                            ))}
+                    </Box>
+                </ScrollableFeed>}
+            {selectedChat &&
+                <FormControl onKeyDown={sendMsg} fullWidth>
+                    {isTyping && <div>
+                        <Lottie options={defaultOptions} width={70} style={{ marginBottom: 15, marginLeft: 0 }}></Lottie>
+                    </div>}
+                    <TextField id='msgField' variant="filled" placeholder='Enter a message' value={newMessge} onChange={setMessageValue}  >
+                    </TextField>
+                </FormControl>}
 
         </>
 

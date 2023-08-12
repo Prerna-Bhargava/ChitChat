@@ -26,11 +26,12 @@ function CurrentChat({ showIcon, fetchChatsAgain, setFetchChatsAgain }) {
                 }
             }
             const { data } = await axios.get("/api/chats", config);
-            if(selectedChat){
-            const updatedSelectedChat = data.find(chat => chat._id === selectedChat._id);
+            if (selectedChat) {
+                const updatedSelectedChat = data.find(chat => chat._id === selectedChat._id);
 
-            // Update the selected chat state
-            setSelectedchat(updatedSelectedChat);}
+                // Update the selected chat state
+                setSelectedchat(updatedSelectedChat);
+            }
             setAllChats(data);
 
         } catch (error) {
@@ -88,8 +89,8 @@ function CurrentChat({ showIcon, fetchChatsAgain, setFetchChatsAgain }) {
                     <Typography>Click on a user to start chatting</Typography>
                 </Box>}
 
-            {user && selectedChat &&
-                <Box className='chatBox'>
+            {user &&
+                <Box className={selectedChat ? 'chatBox' : ''}>
 
                     {user && <DispalyMessages setFetchChatsAgain={setFetchChatsAgain} fetchChatsAgain={fetchChatsAgain} />}
 
