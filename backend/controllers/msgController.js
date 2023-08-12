@@ -5,7 +5,6 @@ const Chat = require('../models/chatModel')
 
 const sendMessage = asyncHandler(async (req, res) => {
     const { content, chatId } = req.body;
-    console.log(req.body)
     var msg = {
         sender: req.user._id,
         content: content,
@@ -48,7 +47,6 @@ const getAllMessage = asyncHandler(async (req, res) => {
 });
 
 const deleteMsg = asyncHandler(async (req, res) => {
-    console.log("recived", req.params)
     try {
         const { msgId } = req.params;
         const isMsg = await Message.findById(msgId)

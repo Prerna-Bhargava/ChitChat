@@ -9,7 +9,6 @@ import ScrollableFeed from 'react-scrollable-feed'
 import io from 'socket.io-client'
 import Lottie from "react-lottie"
 import typingAnim from "../animations/typing.json"
-import DeleteIcon from '@mui/icons-material/Delete';
 import ClearIcon from '@mui/icons-material/Clear';
 
 
@@ -166,6 +165,7 @@ function DispalyMessages({ setFetchChatsAgain, fetchChatsAgain }) {
 
     useEffect(() => {
         socket.on("message received", (newMsg) => {
+            console.log("received message")
             if (!selectedChatCompare || selectedChatCompare._id != newMsg.chat._id) {   //if this is not selected chat or none is selected chat/ give notification
                 if (!notifications.includes(newMsg)) {
                     updateSeenStatus(newMsg);

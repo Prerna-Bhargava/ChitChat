@@ -65,6 +65,7 @@ io.on("connection", (socket) => {
     })
 
     socket.on("new message", (newMsg) => {
+        console.log("new message received to socket")
         var chat = newMsg.chat; //get which chat it belongs;
         if (!chat.users) return 
         chat.users.forEach(user => {

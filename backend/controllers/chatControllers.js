@@ -4,7 +4,6 @@ const User = require('../models/userModel');
 
 // create a chat from user id or return the chat if exists
 const accessChat = asyncHandler(async (req, res) => {
-    console.log(req.body)
     const { userId } = req.body;
     var ischat = await Chat.find({
         isGroupChat: false,
@@ -59,7 +58,6 @@ const fetchChats = asyncHandler(async (req, res) => {
 })
 
 const createGroupChat = asyncHandler(async (req, res) => {
-    console.log(req.body)
     var users = req.body.users;
     if (users.length < 2) {
         return res.status(400).send("More than 2 users are needed to create a group chat")
@@ -73,7 +71,6 @@ const createGroupChat = asyncHandler(async (req, res) => {
             isGroupChat: true,
             groupAdmin: req.user
         })
-        console.log("chat created ", chat)
         const groupChat = await Chat.findOne({ _id: chat._id }).populate("users", "-password").populate("groupAdmin", "-password")
         res.status(200).send(groupChat)
 
@@ -87,7 +84,6 @@ const createGroupChat = asyncHandler(async (req, res) => {
 const removeFromGroup = asyncHandler(async (req, res) => {
 
     const { chatId, userId } = req.body;
-    console.log(req.body)
 
     try {
         const chat = await Chat.findById(chatId);
@@ -110,14 +106,9 @@ const removeFromGroup = asyncHandler(async (req, res) => {
                 res.status(200).send({ message: "Group chat deleted" });
                 return;
             }
-            // const newGroupAdminIndex = Math.floor(
-            //     Math.random() * chat.users.length
-            // );
-            // chat.groupAdmin = chat.users[newGroupAdminIndex];
             const remainingUsers = chat.users.filter(
                 (user) => user.toString() !== userId.toString()
             );
-            console.log(remainingUsers)
             const newGroupAdminIndex = Math.floor(Math.random() * remainingUsers.length);
             chat.groupAdmin = remainingUsers[newGroupAdminIndex];
     
@@ -133,7 +124,6 @@ const removeFromGroup = asyncHandler(async (req, res) => {
 
             res.status(200).send(updatedChat);
         } else {
-            console.log("not admin")
             const updatedChat = await Chat.findByIdAndUpdate(chatId,
                 {
                     $pull: { users: userId },
@@ -153,7 +143,6 @@ const removeFromGroup = asyncHandler(async (req, res) => {
 })
 
 const addToGroup = asyncHandler(async (req, res) => {
-    console.log(req.body)
     const { chatId, userIds, chatName } = req.body;
     userIds.push(req.user)
     try {
@@ -166,7 +155,6 @@ const addToGroup = asyncHandler(async (req, res) => {
                 new: true
             }).populate("users", "-password").populate("groupAdmin", "-password").populate("latestMessage")
 
-        console.log(updatedchat)
         const chats = await User.populate(updatedchat, {
             path: "latestMessage.sender",
             select: "name pic email"
