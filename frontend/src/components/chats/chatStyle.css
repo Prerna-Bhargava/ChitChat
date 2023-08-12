@@ -1,0 +1,42 @@
+.chatBox {
+    background-color: rgb(165, 236, 243);
+    background-color: #cdf1ef;
+    height: 68vh;
+    margin-top: 1%;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow-y: hidden;
+}
+
+.flex {
+    display: flex;
+    justify-content: space-between;
+}
+
+#msgField {
+    padding: 7px !important;
+}
+
+.align-left {
+    background-color: #BEE3F8;
+    margin-right: auto;
+}
+
+.align-right {
+    margin-left: auto;
+    justify-content: right;
+    background-color: #B9F5D0;
+}
+
+.msgBox {
+    padding: 5px 15px !important;
+    display: flex;
+    border-radius: 20px;
+    margin-bottom: 3px;
+}
+
+.mL {
+    margin-left: 32px;
+}
