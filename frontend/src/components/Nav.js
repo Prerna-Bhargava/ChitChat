@@ -125,7 +125,6 @@ export default function Nav() {
     }
 
     const deleteAllMessagesWithSameChatId = async (notidu) => {
-        if(notidu)
         try {
             for (const noti of notifications) {
                 if ((notidu && notidu.chat._id === noti.chat._id) || (!notidu && selectedChat._id == noti.chat._id)) {
