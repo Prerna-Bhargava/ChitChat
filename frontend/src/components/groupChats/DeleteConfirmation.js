@@ -8,7 +8,7 @@ import { ChatState } from "../../context/ChatProvider";
 import { infoToast, errorToast, warningToast, successToast } from '../../notifications/index.js';
 import io from 'socket.io-client'
 
-const ENDPOINT = "http://localhost:5000"
+const ENDPOINT = "https://chit-chat-31cy.onrender.com"
 var socket
 
 const DeleteConfirmation = ({ user, setSelectedgrpchats, handleClose, handleCloseModal, isModalOpen }) => {
