@@ -44,7 +44,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
 const authUser = asyncHandler(async (req, res) => {
     const { password, email } = req.body.Userdata;
-    const user = await User.findOne({email});
+    const user = await User.findOne({ email });
     if (user && (await user.matchPassword(password))) {
         res.json({
             _id: user._id,
@@ -64,19 +64,31 @@ const authUser = asyncHandler(async (req, res) => {
 
 // using search query to extract serach paramater ?search = prerna
 const getallUsers = asyncHandler(async (req, res) => {
-    const keyword = req.query.search?{
-         $or:[
+    const keyword = req.query.search ? {
+        $or: [
             // if name or email matches with the keyword . i means case sensitive
-            {name:{$regex:req.query.search,$options:"i"}},
-            {email:{$regex:req.query.search,$options:"i"}}
-         ]
-    }:{};
+            { name: { $regex: req.query.search, $options: "i" } },
+            { email: { $regex: req.query.search, $options: "i" } }
+        ]
+    } : {};
 
-    const user = await User.find( keyword ).find({_id:{$ne:req.user._id}});
+    const user = await User.find(keyword).find({ _id: { $ne: req.user._id } });
     // exclude the user logged in. 
-   
+
     res.send(user)
 });
 
+const isAuthenticated = asyncHandler(async (req, res) => {
+    const { token } = req.params
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET)
+        req.user = await User.findById(decoded.id).select("-password"); //do not send password
+        return res.status(200).json("success")
+    } catch (error) {
+        res.status(401)
+        throw new Error("Authentication failed, Login Again!")
+    }
+})
 
-module.exports = { registerUser, authUser, getallUsers }
+
+module.exports = { registerUser, authUser, getallUsers, isAuthenticated }

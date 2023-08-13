@@ -20,15 +20,15 @@ app.use('/api/message', messageRoutes)
 const __dirname1 = path.resolve();
 
 if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname1, "/frontend/build")));
+    app.use(express.static(path.join(__dirname1, "/frontend/build")));
 
-  app.get("*", (req, res) =>
-    res.sendFile(path.resolve(__dirname1, "frontend", "build", "index.html"))
-  );
+    app.get("*", (req, res) =>
+        res.sendFile(path.resolve(__dirname1, "frontend", "build", "index.html"))
+    );
 } else {
-  app.get("/", (req, res) => {
-    res.send("API is running..");
-  });
+    app.get("/", (req, res) => {
+        res.send("API is running..");
+    });
 }
 
 // --------------------------deployment------------------------------
@@ -57,13 +57,17 @@ io.on("connection", (socket) => {
         socket.join(room)
     })
 
-    socket.on("typing", (room) => socket.in(room).emit("typing"));
-    socket.on("stop typing", (room) => socket.in(room).emit("stop typing"));
+    socket.on('typing', (room) => {
+        socket.in(room).emit("typing",room);
+    })
+    socket.on('stop typing', (room) => {
+        socket.in(room).emit("stop typing",room);
+    })
 
     socket.on("new message", (newMsg) => {
         console.log("new message received to socket")
         var chat = newMsg.chat; //get which chat it belongs;
-        if (!chat.users) return 
+        if (!chat.users) return
         chat.users.forEach(user => {
             if (user._id == newMsg.sender._id) return;
             socket.in(user._id).emit("message received", newMsg);  //sending new msg to user logged in
@@ -73,10 +77,10 @@ io.on("connection", (socket) => {
 
     socket.on("group_chat_updated", (data) => {
         const { chatId } = data;
-        socket.to(chatId).emit("group_chat_updated",data);
+        socket.to(chatId).emit("group_chat_updated", data);
     });
 
-    socket.off('setup',()=>{
+    socket.off('setup', () => {
         socket.leave(userData._id)
     })
 

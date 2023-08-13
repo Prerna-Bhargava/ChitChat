@@ -9,6 +9,8 @@ import Register from '../../components/SignUp/Register'
 import './LandingPage.css'
 import { useNavigate } from 'react-router-dom';
 import { ChatState } from '../../context/ChatProvider';
+import axios from 'axios';
+import { errorToast } from '../../notifications';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -53,10 +55,17 @@ export default function LandingPage() {
     setValue(newValue);
   };
 
-  React.useEffect(() => {
-    if (user) {
-      navigate('/chats');
+  const isValid = async ()=> {
+    try {
+      const { data } = await axios.get(`/api/user/${user.token}`)
+      navigate('/chats')
+    } catch (err) {
     }
+  }
+
+  React.useEffect(() => {
+    if(user)
+    isValid()
   }, [user])
 
 

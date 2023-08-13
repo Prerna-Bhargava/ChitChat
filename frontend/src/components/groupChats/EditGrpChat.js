@@ -18,10 +18,8 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteConfirmation from './DeleteConfirmation.js';
 import io from 'socket.io-client'
 
-const ENDPOINT = "https://chit-chat-31cy.onrender.com"
+const ENDPOINT = "https://chit-chat-31cy.onrender.com/"
 var socket
-
-
 
 export default function EditGrpChat() {
     const [width, setWidth] = React.useState(window.innerWidth)
@@ -53,10 +51,9 @@ export default function EditGrpChat() {
     const [selectedgrpChats, setSelectedgrpchats] = React.useState([]);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
-    const { register, handleSubmit, reset, control, formState: { errors } } = useForm();
+    const { handleSubmit, reset, control, formState: { errors } } = useForm();
     const [searchResult, setSearchResult] = React.useState([]);
 
-    const history = useNavigate();
 
     const [isModalOpen, setIsModalOpen] = React.useState(false);
 
@@ -117,7 +114,6 @@ export default function EditGrpChat() {
                     Authorization: `Bearer ${JSON.parse(localStorage.getItem("userInfo")).token}`
                 }
             }
-
             const { data } = await axios.put("/api/chats/groupUpdate", {
                 userIds: users,
                 chatId: selectedChat._id,
@@ -145,7 +141,6 @@ export default function EditGrpChat() {
         const loggedId = JSON.parse(localStorage.getItem("userInfo"))._id
         setSelectedgrpchats(selectedChat.users.filter(user => user._id !== loggedId).map(({ _id, name }) => ({ id: _id, name })));
         setChatName(selectedChat.chatName)
-
     }, [selectedChat])
 
     React.useEffect(() => {
@@ -259,9 +254,7 @@ export default function EditGrpChat() {
 
                     </form>
 
-
                 </Box>
-
 
             </Modal>
         </div>

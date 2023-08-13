@@ -8,7 +8,7 @@ import { ChatState } from "../../context/ChatProvider";
 import { infoToast, errorToast, warningToast, successToast } from '../../notifications/index.js';
 import io from 'socket.io-client'
 
-const ENDPOINT = "https://chit-chat-31cy.onrender.com"
+const ENDPOINT = "https://chit-chat-31cy.onrender.com/"
 var socket
 
 const DeleteConfirmation = ({ user, setSelectedgrpchats, handleClose, handleCloseModal, isModalOpen }) => {
@@ -60,7 +60,6 @@ const DeleteConfirmation = ({ user, setSelectedgrpchats, handleClose, handleClos
     React.useEffect(() => {
         socket = io(ENDPOINT);
         socket.emit("setup", user)
-        
     }, [])
     return (
         <>

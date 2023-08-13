@@ -43,6 +43,7 @@ export default function Login({ handleChange }) {
       setUser(data)
       reset();
       isLoading(false);
+      console.log("move to chats")
       history('/chats')
 
     } catch (err) {

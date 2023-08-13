@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { ChatState } from '../context/ChatProvider';
 import { infoToast, errorToast, warningToast, successToast } from '../notifications/index';
 import axios from 'axios';
-import { Avatar, Box, FormControl, Input, TextField, Tooltip, Typography } from '@mui/material';
+import { Avatar, Box, FormControl, TextField} from '@mui/material';
 import { sameSender, showAvatar } from '../miscellanous/ChatFunctions';
 import ProfileModal from './ProfileModal';
 import ScrollableFeed from 'react-scrollable-feed'
@@ -11,10 +11,8 @@ import Lottie from "react-lottie"
 import typingAnim from "../animations/typing.json"
 import ClearIcon from '@mui/icons-material/Clear';
 
-
-const ENDPOINT = "https://chit-chat-31cy.onrender.com"
+const ENDPOINT = "https://chit-chat-31cy.onrender.com/"
 var socket, selectedChatCompare;
-
 
 function DispalyMessages({ setFetchChatsAgain, fetchChatsAgain }) {
     const { selectedChat, setSelectedchat, chats, user, setAllChats, notifications, setNotifications } = ChatState();
@@ -22,8 +20,6 @@ function DispalyMessages({ setFetchChatsAgain, fetchChatsAgain }) {
     const [showDelIcons, setShowDelIcons] = useState([]);
     const [typing, setTyping] = useState(false);
     const [isTyping, setisTyping] = useState(false);
-
-
     const [messages, setMesssges] = useState([]);
     const [newMessge, setMsgContent] = useState();
 
@@ -39,8 +35,6 @@ function DispalyMessages({ setFetchChatsAgain, fetchChatsAgain }) {
     const setMessageValue = (e) => {
         setMsgContent(e.target.value)
 
-        //   real time typing display logic here
-
         if (!socketConnected) return;
 
         if (!typing) {
@@ -48,7 +42,7 @@ function DispalyMessages({ setFetchChatsAgain, fetchChatsAgain }) {
             socket.emit("typing", selectedChat._id)
         }
 
-        // stoping
+        // stop typing
         let lastTypingTime = new Date().getTime();
         var timerlength = 2000;
         setTimeout(() => {
@@ -70,7 +64,6 @@ function DispalyMessages({ setFetchChatsAgain, fetchChatsAgain }) {
             }
             const { data } = await axios.get(`/api/message/${selectedChat._id}`, config);
             setMesssges(data);
-
             socket.emit('join chat', selectedChat._id)
 
         } catch (error) {
@@ -114,8 +107,6 @@ function DispalyMessages({ setFetchChatsAgain, fetchChatsAgain }) {
                 socket.emit("new message", data)
                 setMesssges([...messages, data]);
                 setFetchChatsAgain(!fetchChatsAgain);
-
-
             } catch (error) {
                 errorToast(error?.response?.data?.message)
             }
@@ -130,7 +121,8 @@ function DispalyMessages({ setFetchChatsAgain, fetchChatsAgain }) {
                 }
             }
             const { data } = await axios.delete(`/api/message/deleteMsg/${event._id}`, config);
-            fetchMsg()
+            fetchMsg();
+            socket.emit("group_chat_updated", { chatId: selectedChat._id });
             successToast(data.message)
 
         } catch (error) {
@@ -149,9 +141,6 @@ function DispalyMessages({ setFetchChatsAgain, fetchChatsAgain }) {
         socket.on("connected", () => {
             setSocketConnected(true)
         })
-        socket.on("typing", () => setisTyping(true))
-        socket.on("stop typing", () => setisTyping(false))
-
     }, [])
     useEffect(() => {
         if (selectedChat)
@@ -159,6 +148,16 @@ function DispalyMessages({ setFetchChatsAgain, fetchChatsAgain }) {
         selectedChatCompare = selectedChat
         socket.on("group_chat_updated", (data) => {
             setFetchChatsAgain(!fetchChatsAgain);
+        });
+        socket.on("typing", (room) => {
+            if (selectedChat && selectedChatCompare._id === room) {
+                setisTyping(true);
+            }
+        });
+        socket.on("stop typing", (room) => {
+            if (selectedChat && selectedChatCompare._id === room) {
+                setisTyping(false);
+            }
         });
 
     }, [selectedChat])
